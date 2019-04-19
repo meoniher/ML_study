@@ -1,1 +1,47 @@
+#最小二乘法
+import numpy as np
 
+def loadDataSet(fileName):
+    dataMat = []
+    labelMat = []
+    fr = open(fileName)
+    for line in fr.readlines():
+        curLine = line.strip().split('\t')
+        dataMat.append(list(map(float, curLine[:-1])))
+        labelMat.append(float(curLine[-1]))
+    return dataMat, labelMat
+
+def standRegress(xArr, yArr):
+    xMat = np.mat(xArr)
+    yMat = np.mat(yArr).T
+    xTx = xMat.T * xMat
+    if np.linalg.det(xTx) == 0.0:
+        return
+    ws = xTx.I * (xMat.T * yMat)
+    return ws
+
+
+
+#from suixin:
+class LinearRegressionNM:
+    '''
+        线性回归-牛顿法
+    '''
+    def __init__(self):
+        self.data = datasets.load_diabetes()
+        self.x, self.y =datasets.load_diabetes()['data'], datasets.load_diabetes()['target']
+        #插入数据1
+        self.x=np.insert(self.x,0,1,axis=1)
+
+
+    def computeHessianinv(self,x):
+        #注意区别与最小二乘法之间的推导区别
+        return np.linalg.inv(x.T.dot(x))
+
+
+    def fit(self):
+        return self.computeHessianinv(self.x).dot(self.x.T).dot(self.y)
+
+    def predict(self,x):
+        w=self.fit()
+        return w[0]+np.sum(w[1:].T*x,axis=1)
